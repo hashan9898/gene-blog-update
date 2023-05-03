@@ -1,0 +1,59 @@
+plugins {
+	id 'java'
+	id 'org.springframework.boot' version '2.7.8-SNAPSHOT'
+	id 'io.spring.dependency-management' version '1.0.15.RELEASE'
+	id "org.sonarqube" version "3.5.0.2730"	
+	id 'jacoco'
+}
+
+group = 'com.gene'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '17'
+
+repositories {
+	jcenter()
+	mavenCentral()
+	maven { url 'https://repo.spring.io/milestone' }
+	maven { url 'https://repo.spring.io/snapshot' }
+}
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter-actuator'
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
+	implementation 'mysql:mysql-connector-java:8.0.25'
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.modelmapper:modelmapper:3.1.1'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testImplementation 'io.projectreactor:reactor-test'
+
+	compileOnly 'org.projectlombok:lombok:1.18.24'
+	annotationProcessor 'org.projectlombok:lombok:1.18.24'
+
+	implementation 'io.jkratz.springmediatr:spring-mediatr:1.1-RELEASE'
+}
+
+jacoco {
+    toolVersion = "0.8.8"
+    reportsDir = file("$buildDir/reports/jacoco")
+}
+
+jacocoTestReport {
+    reports {
+        xml.enabled true
+        html.enabled false
+	xml.destination file("$buildDir/reports/jacoco/test/jacocoTestReport.xml")
+    }
+}
+sonarqube {
+    properties {
+        property "sonar.host.url", "https://sonarqube.swiveltech.lk/"
+        property "sonar.login", "jenkins-sonar-token"
+        property "sonar.coverage.jacoco.xmlReportPaths", "${project.buildDir}/reports/jacoco/test/jacocoTestReport.xml"
+    }
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+}
